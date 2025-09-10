@@ -14,7 +14,7 @@ import com.example.fragments.R
 import android.widget.TextView
 import androidx.fragment.app.setFragmentResultListener
 import com.example.fragments.data.BudgetDataManager
-
+import androidx.navigation.fragment.findNavController
 
 class TouristSpotListFragment : Fragment() {
 
@@ -70,20 +70,13 @@ class TouristSpotListFragment : Fragment() {
 
     // navigasi ke addtourist
     private fun openAddTouristSpot() {
-        val fragment = AddTouristSpotFragment()
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer, fragment)
-            .addToBackStack(null)
-            .commit()
+        findNavController().navigate(R.id.action_touristSpotListFragment_to_addTouristSpotFragment)
     }
 
     // navigassi ke expensedetail
     private fun openExpenseDetail(spot: TouristSpot) {
-        val fragment = ExpenseDetailFragment.newInstance(spot.id, spot.name)
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer, fragment)
-            .addToBackStack(null)
-            .commit()
+        val action = TouristSpotListFragmentDirections.actionTouristSpotListFragmentToExpenseDetailFragment(spot.id, spot.name)
+        findNavController().navigate(action)
     }
 
     // mengambil data terbaru + memperbarui recyclerview

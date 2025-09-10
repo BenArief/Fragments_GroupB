@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/touristSpotListFragment">
+
+    <fragment
+        android:id="@+id/touristSpotListFragment"
+        android:name="com.example.fragments.fragments.TouristSpotListFragment"
+        android:label="fragment_tourist_spot_list"
+        tools:layout="@layout/fragment_tourist_spot_list" >
+        <action
+            android:id="@+id/action_touristSpotListFragment_to_addTouristSpotFragment"
+            app:destination="@id/addTouristSpotFragment" />
+        <action
+            android:id="@+id/action_touristSpotListFragment_to_expenseDetailFragment"
+            app:destination="@id/expenseDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/budgetOverviewFragment"
+        android:name="com.example.fragments.fragments.BudgetOverviewFragment"
+        android:label="fragment_budget_overview"
+        tools:layout="@layout/fragment_budget_overview" />
+
+    <fragment
+        android:id="@+id/addTouristSpotFragment"
+        android:name="com.example.fragments.fragments.AddTouristSpotFragment"
+        android:label="fragment_add_tourist_spot"
+        tools:layout="@layout/fragment_add_tourist_spot" />
+
+    <fragment
+        android:id="@+id/expenseDetailFragment"
+        android:name="com.example.fragments.fragments.ExpenseDetailFragment"
+        android:label="fragment_expense_detail"
+        tools:layout="@layout/fragment_expense_detail" >
+        <argument
+            android:name="spotId"
+            app:argType="string" />
+        <argument
+            android:name="spotName"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_expenseDetailFragment_to_addExpenseFragment"
+            app:destination="@id/addExpenseFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addExpenseFragment"
+        android:name="com.example.fragments.fragments.AddExpenseFragment"
+        android:label="fragment_add_expense"
+        tools:layout="@layout/fragment_add_expense" >
+        <argument
+            android:name="spotId"
+            app:argType="string" />
+    </fragment>
+</navigation>

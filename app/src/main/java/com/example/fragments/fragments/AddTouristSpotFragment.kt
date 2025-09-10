@@ -14,6 +14,7 @@ import com.example.fragments.data.BudgetDataManager
 import com.example.fragments.data.TouristSpot
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
+import androidx.navigation.fragment.findNavController
 
 //form untuk menambahkan data Tempat Wisata baru.
 // Baca aja AddExpenseFragment, kurang lebih sama soalnnya
@@ -47,7 +48,7 @@ class AddTouristSpotFragment : Fragment() {
 
         val btnCancel = view.findViewById<Button>(R.id.btnCancel)
         btnCancel.setOnClickListener {
-            parentFragmentManager.popBackStack()
+            findNavController().popBackStack() // Kembali ke layar sebelumnya
         }
     }
 
@@ -84,7 +85,6 @@ class AddTouristSpotFragment : Fragment() {
         BudgetDataManager.addTouristSpot(touristSpot)
         Toast.makeText(context, "Wisata berhasil ditambahkan", Toast.LENGTH_SHORT).show()
         setFragmentResult("spot_added_request", bundleOf("refresh" to true))
-
-        parentFragmentManager.popBackStack()
+        findNavController().popBackStack() // Kembali setelah menyimpan
     }
 }

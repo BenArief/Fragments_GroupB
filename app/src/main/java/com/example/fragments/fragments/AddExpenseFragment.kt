@@ -11,6 +11,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import com.example.fragments.data.BudgetDataManager
 import com.example.fragments.data.Expense
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 
 // Fragment buat nambahin data pengeluaran
 class AddExpenseFragment : Fragment() {
@@ -20,10 +22,10 @@ class AddExpenseFragment : Fragment() {
     private lateinit var spinnerCategory: Spinner
     private lateinit var etDescription: EditText
     private lateinit var etAmount: EditText
+    private val args: AddExpenseFragmentArgs by navArgs()
 
     // Nampung fungsi dengan class
-    companion object {
-        // kunci konstan
+    /*companion object {
         private const val ARG_SPOT_ID = "spot_id"
 
         fun newInstance(spotId: String): AddExpenseFragment {
@@ -33,15 +35,12 @@ class AddExpenseFragment : Fragment() {
             fragment.arguments = args
             return fragment
         }
-    }
+    }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // ambil argumen dari bundle newinstance
-        arguments?.let {
-            // ambil id tempat wisata dari bundle, kalo gk ada pake string kosong
-            spotId = it.getString(ARG_SPOT_ID) ?: ""
-        }
+        // Ambil dari Safe Args
+        spotId = args.spotId
     }
 
     // buat tampilan fragment
@@ -73,7 +72,7 @@ class AddExpenseFragment : Fragment() {
 
         val btnCancel = view.findViewById<Button>(R.id.btnCancelExpense)
         btnCancel.setOnClickListener {
-            parentFragmentManager.popBackStack()
+            findNavController().popBackStack()
         }
     }
 
@@ -116,7 +115,6 @@ class AddExpenseFragment : Fragment() {
             Toast.makeText(context, "Jumlah harus berupa angka", Toast.LENGTH_SHORT).show()
             return
         }
-
         // jumlah lebih dari 0
         if (amount <= 0) {
             Toast.makeText(context, "Jumlah harus lebih dari 0", Toast.LENGTH_SHORT).show()
@@ -142,6 +140,6 @@ class AddExpenseFragment : Fragment() {
 
         //kasih feedback
         Toast.makeText(context, "Pengeluaran berhasil ditambahkan", Toast.LENGTH_SHORT).show()
-        parentFragmentManager.popBackStack()
+        findNavController().popBackStack()
     }
 }

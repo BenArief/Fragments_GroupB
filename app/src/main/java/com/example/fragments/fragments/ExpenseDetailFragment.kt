@@ -13,7 +13,8 @@ import com.example.fragments.adapters.ExpenseAdapter
 import com.example.fragments.data.BudgetDataManager
 import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
-import androidx.fragment.app.setFragmentResult
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 
 // daftar detail pengeluaran
 class ExpenseDetailFragment : Fragment() {
@@ -22,46 +23,48 @@ class ExpenseDetailFragment : Fragment() {
     private lateinit var spotName: String
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ExpenseAdapter
+    private val args: ExpenseDetailFragmentArgs by navArgs()
 
-    companion object {
-        private const val ARG_SPOT_ID = "spot_id"
-        private const val ARG_SPOT_NAME = "spot_name"
-
+    /*companion object {
         // Factory method buat instance fragment
         fun newInstance(spotId: String, spotName: String): ExpenseDetailFragment {
-            val fragment = ExpenseDetailFragment()
-            val args = Bundle()
-            args.putString(ARG_SPOT_ID, spotId)
-            args.putString(ARG_SPOT_NAME, spotName)
-            fragment.arguments = args
-            return fragment
+            val fragment = ExpenseDetailFragment() //Buat Fragment baru
+            val args = Bundle() //Buat Bundle Kosong
+            args.putString(ARG_SPOT_ID, spotId) //Masukin data ke bundle
+            args.putString(ARG_SPOT_NAME, spotName) //Masukin data ke bundle
+            fragment.arguments = args //Pasang bundle ke fragment
+            return fragment //Return Fragment yang sudah di buat
         }
-    }
+        private const val ARG_SPOT_ID = "spot_id"
+
+        private const val ARG_SPOT_NAME = "spot_name"
+    }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            spotId = it.getString(ARG_SPOT_ID) ?: ""
-            spotName = it.getString(ARG_SPOT_NAME) ?: ""
-        }
+        super.onCreate(savedInstanceState) // Mengambil data dari bundle
+        // Ambil dari Safe Args
+        spotId = args.spotId
+        spotName = args.spotName
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, // Buat tampilan dari layout
+        container: ViewGroup?, // Parent kontainer buat ukuran referensi
+        savedInstanceState: Bundle? // Bundle buat ngambil data dari fragment lain
     ): View? {
-        return inflater.inflate(R.layout.fragment_expense_detail, container, false)
+        return inflater.inflate(R.layout.fragment_expense_detail // file xml yang diubah
+            , container // parent untuk referensi ukuran
+            , false // memasang view yang telah kita buat ke kontainer
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Setup Toolbar dengan judul dan tombol kembali.
         val toolbar = view.findViewById<Toolbar>(R.id.expenseDetailToolbar)
         toolbar.title = "Pengeluaran - $spotName"
         toolbar.setNavigationOnClickListener {
-            parentFragmentManager.popBackStack()
+            findNavController().popBackStack()
         }
 
         setupRecyclerView(view)
@@ -91,11 +94,8 @@ class ExpenseDetailFragment : Fragment() {
 
     // navigasi addexpense
     private fun openAddExpense() {
-        val fragment = AddExpenseFragment.newInstance(spotId)
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer, fragment)
-            .addToBackStack(null)
-            .commit()
+        val action = ExpenseDetailFragmentDirections.actionExpenseDetailFragmentToAddExpenseFragment(spotId)
+        findNavController().navigate(action)
     }
 
     // ambil data pengeluaran terbaru dari budgetdatamanager

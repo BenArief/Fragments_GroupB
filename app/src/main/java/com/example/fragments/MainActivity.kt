@@ -1,75 +1,55 @@
 package com.example.fragments
 
 import android.os.Bundle
-import android.view.View //
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
-import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
-import com.example.fragments.fragments.*
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.tabs.TabLayout
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var navController: NavController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // tetapin layout xml
         setContentView(R.layout.activity_main)
 
-        //insialisasi komponen ui
-        val viewPager = findViewById<ViewPager2>(R.id.viewPager)
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
+
         val appBarLayout = findViewById<AppBarLayout>(R.id.appBarLayout)
-        //panggil fungsi mengatur viewpager
-        setupViewPager(viewPager)
-
-        // tambahin listener buat pantau perubahan di back stack fragmant (berissi riwayat fragment yg udh dibuka)
-        supportFragmentManager.addOnBackStackChangedListener {
-            // kalo back stack > 0, di fragment detail
-            if (supportFragmentManager.backStackEntryCount > 0) {
-                viewPager.visibility = View.GONE
-                appBarLayout.visibility = View.GONE
-            } else {
-                // kalo back stack 0 = kembali ke layar utama
-                viewPager.visibility = View.VISIBLE
-                appBarLayout.visibility = View.VISIBLE
-            }
-        }
-    }
-
-    //helper buat konfigurasi viewparger
-    private fun setupViewPager(viewPager: ViewPager2) {
         val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
 
-        //buat instance dari adapter internal
-        val adapter = ViewPagerAdapter(this)
-        viewPager.adapter = adapter
+        // Tambahkan tab secara manual
+        tabLayout.addTab(tabLayout.newTab().setText("Wisata"))
+        tabLayout.addTab(tabLayout.newTab().setText("Budget Overview"))
 
-        // kelas utilitas yang hubungin TabLayout dengan view pager. menangani sinkornisasi antara tab yang dipilih dan halaman yang ditampilin
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            //tetapin teks untuk tiap tab sesuai posisinya
-            tab.text = when(position) {
-                0 -> "Wisata"
-                1 -> "Budget Overview"
-                else -> "Tab ${position + 1}"
-            }
-        }.attach()
-    }
-
-    // adapter internal buat nyediain fragment untuk viewparger
-    private class ViewPagerAdapter(fragmentActivity: FragmentActivity) :
-        FragmentStateAdapter(fragmentActivity) {
-
-            override fun getItemCount(): Int = 2
-
-            override fun createFragment(position: Int): Fragment {
-            return when(position) {
-                0 -> TouristSpotListFragment() // daftar wisata
-                1 -> BudgetOverviewFragment() // ringkasan budge
-                else -> TouristSpotListFragment() // fallback default
+        // Listener untuk mengatur visibilitas AppBar berdasarkan tujuan navigasi
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id == R.id.touristSpotListFragment || destination.id == R.id.budgetOverviewFragment) {
+                appBarLayout.visibility = View.VISIBLE
+            } else {
+                appBarLayout.visibility = View.GONE
             }
         }
+
+        // Listener untuk menangani klik pada tab
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                when (tab?.position) {
+                    0 -> if (navController.currentDestination?.id != R.id.touristSpotListFragment) {
+                        navController.navigate(R.id.touristSpotListFragment)
+                    }
+                    1 -> if (navController.currentDestination?.id != R.id.budgetOverviewFragment) {
+                        navController.navigate(R.id.budgetOverviewFragment)
+                    }
+                }
+            }
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
+        })
     }
 }
